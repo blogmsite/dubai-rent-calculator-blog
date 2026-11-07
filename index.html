@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>Dubai Rent Calculator — RERA, Ejari &amp; Rent vs Buy</title>
+<meta name="description" content="Check a Dubai rent increase against the RERA 0–20% bands and 90-day notice rule, compare rent vs buy with the JVC worked example, and generate a renewal reply letter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f5f0; --surface:#ffffff; --surface2:#efece4; --ink:#14201c; --muted:#5a6862; --line:#ddd8cb;
+  --navy:#0f2e3d; --teal:#0e6b5e; --gold:#c49a3c; --gold-bg:#fdf3d7; --danger:#b42318; --danger-bg:#fdeceb; --ok:#0e6b5e; --ok-bg:#e2f2ee;
+  --radius:14px;
+}
+@media(prefers-color-scheme:dark){
+  :root{ --bg:#0d1513; --surface:#16211e; --surface2:#1d2b27; --ink:#edf2ef; --muted:#a7b5af; --line:#2c3d38; --navy:#dcebf2; --gold-bg:#3a3115; --danger-bg:#3d1a17; --ok-bg:#12332c; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;line-height:1.6}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;line-height:1.15;margin:0}
+a{color:var(--teal)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+.hero{position:relative;color:#fff}
+.hero img{width:100%;height:340px;object-fit:cover;display:block;filter:brightness(.62)}
+.hero-text{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px 0 30px}
+.hero h1{font-size:clamp(30px,5.5vw,52px);max-width:720px}
+.hero p{max-width:640px;margin:10px 0 0;font-size:17px;color:#eef3f1}
+.pill{display:inline-block;background:var(--gold);color:#1a1405;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:99px;margin-bottom:12px;width:fit-content}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:22px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.stat b{display:block;font-size:22px;font-family:"Playfair Display",serif}
+.stat span{color:var(--muted);font-size:13.5px}
+section{margin:34px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{border:1px solid var(--line);background:var(--surface2);color:var(--ink);padding:10px 16px;border-radius:99px;font-weight:700;cursor:pointer;font-family:inherit;font-size:15px}
+.tab[aria-selected="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+@media(prefers-color-scheme:dark){.tab[aria-selected="true"]{background:var(--teal);border-color:var(--teal)}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+textarea{min-height:220px;font-size:14px;line-height:1.55}
+.result{background:var(--surface2);border-radius:12px;padding:16px;margin-top:16px}
+.result .big{font-size:30px;font-weight:800;font-family:"Playfair Display",serif}
+.badge{display:inline-block;padding:4px 10px;border-radius:99px;font-weight:800;font-size:13px}
+.badge.ok{background:var(--ok-bg);color:var(--ok)} .badge.bad{background:var(--danger-bg);color:var(--danger)} .badge.warn{background:var(--gold-bg);color:#7a5c12}
+@media(prefers-color-scheme:dark){.badge.warn{color:#f0d48a}}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.btn{background:var(--teal);color:#fff;border:none;padding:11px 18px;border-radius:10px;font-weight:800;cursor:pointer;font-family:inherit;font-size:15px}
+.btn.secondary{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.small{font-size:13.5px;color:var(--muted)}
+.steps{list-style:none;padding:0;margin:0;counter-reset:s}
+.steps li{padding:12px 0 12px 44px;position:relative;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:none}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:10px;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+@media(prefers-color-scheme:dark){.steps li::before{background:var(--teal)}}
+details{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+summary{font-weight:800;cursor:pointer;font-size:17px}
+.src{font-size:13px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:26px 0 40px;margin-top:40px}
+.bar{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;background:var(--gold)}
+input[type=range]{padding:0}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="assets/hero-dubai-marina.jpg" alt="Dubai Marina residential towers in the evening">
+  <div class="hero-text"><div class="wrap" style="width:100%">
+    <span class="pill">Dubai tenant toolkit · Research 6 Nov 2026</span>
+    <h1>Can your landlord raise your rent? Check it before you sign.</h1>
+    <p>Dubai rent increases are capped by the RERA bands — 0%, 5%, 10%, 15% or 20% — and your landlord must give 90 days' notice. Use the checker below, then compare renting vs buying with real published area maths.</p>
+  </div></div>
+</header>
+
+<main class="wrap">
+  <div class="stats">
+    <div class="stat"><b>0–20%</b><span>The only permitted increase bands under Decree 43/2013, set by how far your rent sits below the Smart Rental Index average. <em>Source: Driven Properties; PropertyStellar.</em></span></div>
+    <div class="stat"><b>90 days</b><span>Minimum notice your landlord must give before a rent increase at renewal. Less notice than that is a red flag. <em>Source: Driven Properties.</em></span></div>
+    <div class="stat"><b>Jan 2025</b><span>Dubai Land Department launched the Smart Rental Index — which is why older RERA guides can now be out of date. <em>Source: PropertyStellar.</em></span></div>
+    <div class="stat"><b>3–6 years</b><span>Published break-even for buying vs renting in the JVC worked example below. <em>Source: MortgageCompare, updated 2 Nov 2026.</em></span></div>
+  </div>
+
+  <!-- CALCULATORS -->
+  <section aria-labelledby="calc-h">
+    <h2 id="calc-h" style="font-size:30px;margin-bottom:6px">The calculators</h2>
+    <p style="color:var(--muted);max-width:720px">Two tools, no sign-up. The checker tests a proposed increase against the rules this site can verify from its sources. For your exact permitted band, you still need your building's figure from the official Dubai Land Department Smart Rental Index — this page does not invent building-level rents.</p>
+
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" id="tab-rera" onclick="showTab('rera')">RERA increase checker</button>
+        <button class="tab" role="tab" aria-selected="false" id="tab-rvb" onclick="showTab('rvb')">Rent vs buy</button>
+      </div>
+
+      <!-- RERA -->
+      <div id="panel-rera">
+        <div class="grid2">
+          <div>
+            <label for="curRent">Your current annual rent (AED)</label>
+            <input id="curRent" type="number" min="0" value="55000" oninput="calcRera()">
+            <label for="newRent">Landlord's proposed annual rent (AED)</label>
+            <input id="newRent" type="number" min="0" value="60500" oninput="calcRera()">
+            <label for="noticeDays">Days' notice the landlord gave you</label>
+            <input id="noticeDays" type="number" min="0" value="90" oninput="calcRera()">
+          </div>
+          <div class="result" id="reraResult" aria-live="polite"></div>
+        </div>
+        <h3 style="margin:22px 0 8px;font-size:20px">The five permitted bands</h3>
+        <p class="small">Under Decree 43/2013, the permitted increase depends on how far your current rent is below the average for similar homes in the Smart Rental Index. The bands themselves are 0 / 5 / 10 / 15 / 20% — there is no permitted increase above 20%. Which band applies to you is set by the Index gap for your unit, so check your exact figure in the official DLD calculator before agreeing or refusing. <em>Sources: <a href="https://www.drivenproperties.com/blog/rera-rent-calculator-dubai">Driven Properties — RERA Rent Calculator Dubai 2026</a>; <a href="https://www.propertystellar.com/blog/understanding-the-rera-rental-increase-calculator">PropertyStellar — RERA Rental Increase Calculator 2026</a>.</em></p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:10px">
+          <div style="text-align:center;background:var(--ok-bg);border-radius:10px;padding:12px"><b style="font-size:22px">0%</b><br><span class="small">No increase</span></div>
+          <div style="text-align:center;background:var(--surface2);border-radius:10px;padding:12px"><b style="font-size:22px">5%</b></div>
+          <div style="text-align:center;background:var(--surface2);border-radius:10px;padding:12px"><b style="font-size:22px">10%</b></div>
+          <div style="text-align:center;background:var(--surface2);border-radius:10px;padding:12px"><b style="font-size:22px">15%</b></div>
+          <div style="text-align:center;background:var(--gold-bg);border-radius:10px;padding:12px"><b style="font-size:22px">20%</b><br><span class="small">Maximum</span></div>
+        </div>
+      </div>
+
+      <!-- RENT VS BUY -->
+      <div id="panel-rvb" hidden>
+        <p class="small">Worked example built into the defaults: a JVC 1-bed at <b>AED 55,000/yr rent</b> vs a mortgage of <b>AED 3,333/mo</b>, with a published break-even of <b>3–6 years</b> and roughly <b>28% cash needed upfront</b> to buy. <em>Source: <a href="https://mortgagecompare.ae/knowledge-hub/rent-or-buy-dubai.html">MortgageCompare — Rent or buy in Dubai (updated 2 Nov 2026)</a>.</em> Change the numbers to your own area — the maths below is a simple cash-outlay comparison, not a forecast: it excludes maintenance, service charges, price growth and mortgage interest changes.</p>
+        <div class="grid2">
+          <div>
+            <label for="rvbRent">Annual rent (AED)</label>
+            <input id="rvbRent" type="number" min="0" value="55000" oninput="calcRvb()">
+            <label for="rvbMort">Monthly mortgage payment (AED)</label>
+            <input id="rvbMort" type="number" min="0" value="3333" oninput="calcRvb()">
+            <label for="rvbPrice">Property price (AED) — used for the ~28% upfront cash</label>
+            <input id="rvbPrice" type="number" min="0" value="850000" oninput="calcRvb()">
+            <label for="rvbYears">How long you expect to stay: <span id="rvbYearsLabel">5 years</span></label>
+            <input id="rvbYears" type="range" min="1" max="10" value="5" oninput="calcRvb()">
+            <div class="btnrow"><button class="btn secondary" onclick="resetJvc()">Reset to JVC example</button></div>
+          </div>
+          <div class="result" id="rvbResult" aria-live="polite"></div>
+        </div>
+        <p class="small" style="margin-top:14px">Context: gross rental yields for Dubai apartments were reported at <b>6.66% (Aug 2026)</b> — useful background for investors, not a promise for any single flat. <em>Source: <a href="https://www.keysandnumbers.com/blog/rent-vs-buy-in-dubai-2026">KeysAndNumbers — Rent or Buy in Dubai 2026</a>.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section aria-labelledby="tpl-h">
+    <h2 id="tpl-h" style="font-size:30px;margin-bottom:6px">Renewal reply letters</h2>
+    <p style="color:var(--muted);max-width:720px">Fill in your details and the letter updates itself. Copy it or download it as a text file — nothing is sent anywhere by this page.</p>
+    <div class="card">
+      <div class="grid2">
+        <div>
+          <label for="tName">Your full name</label><input id="tName" value="Your Name" oninput="buildLetter()">
+          <label for="tUnit">Unit &amp; building / area</label><input id="tUnit" value="Unit 000, Building Name, Area, Dubai" oninput="buildLetter()">
+          <label for="tLandlord">Landlord / agency name</label><input id="tLandlord" value="Landlord / Agency" oninput="buildLetter()">
+          <label for="tType">Letter type</label>
+          <select id="tType" onchange="buildLetter()">
+            <option value="challenge">Challenge an increase above the permitted band</option>
+            <option value="shortnotice">Object to notice shorter than 90 days</option>
+            <option value="accept">Accept the renewal and confirm Ejari steps</option>
+          </select>
+        </div>
+        <div>
+          <label for="letterOut">Your letter</label>
+          <textarea id="letterOut" readonly></textarea>
+          <div class="btnrow">
+            <button class="btn" onclick="copyLetter()">Copy letter</button>
+            <button class="btn secondary" onclick="downloadLetter()">Download .txt</button>
+            <span id="copyMsg" class="small" role="status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EJARI CHECKLIST -->
+  <section aria-labelledby="ej-h">
+    <div class="grid2">
+      <div class="card">
+        <h2 id="ej-h" style="font-size:24px;margin-bottom:10px">Ejari renewal, step by step</h2>
+        <ol class="steps">
+          <li><b>Check the increase first.</b> Run the checker above and confirm your permitted band in the official DLD Smart Rental Index before you agree to any new rent.</li>
+          <li><b>Count the notice.</b> An increase needs 90 days' notice. If you were told later than that, use the short-notice letter above.</li>
+          <li><b>Agree the new rent in writing.</b> Keep the agreed figure, dates and cheque schedule in the signed tenancy contract — not just in chat messages.</li>
+          <li><b>Renew the Ejari.</b> Register the renewed contract so the Ejari certificate matches the new term and rent.</li>
+          <li><b>Keep everything.</b> Contract, Ejari certificate, cheques and the landlord's notice together — they are what a Rental Dispute Centre case would turn on.</li>
+        </ol>
+      </div>
+      <div>
+        <img src="assets/dubai-skyline.jpg" alt="Dubai skyline and residential towers" style="width:100%;height:220px;object-fit:cover;border-radius:14px;display:block">
+        <div class="card" style="margin-top:12px">
+          <h3 style="font-size:20px;margin-bottom:6px">Why this topic, why now</h3>
+          <p style="margin:0">Every Dubai tenant renews every year, and the Smart Rental Index change in January 2025 left many older guides stale. That combination — an annual deadline plus outdated advice — is exactly why a calculator and templates beat another generic “cost of living” article. This site was chosen as the #1 blog bet in a 59-source Dubai gap audit (6 Nov 2026).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDES -->
+  <section aria-labelledby="g-h">
+    <h2 id="g-h" style="font-size:30px;margin-bottom:14px">Guides</h2>
+    <details open>
+      <summary>How the RERA increase actually works</summary>
+      <p>Your landlord cannot simply pick a number. The increase is capped by Decree 43/2013 into five bands — 0%, 5%, 10%, 15% and 20% — based on how far your rent sits below the Smart Rental Index average for similar property. The further below the average you are, the higher the permitted band; if you are already at or near the average, the permitted increase can be 0%. Two protections matter most in practice: the 20% ceiling, and the 90-day notice rule. If either is breached, you have grounds to push back before signing — use the letters above.</p>
+      <p class="src">Sources: Driven Properties; PropertyStellar (accessed 6 Nov 2026).</p>
+    </details>
+    <details>
+      <summary>Rent vs buy in Dubai: what the JVC maths really says</summary>
+      <p>MortgageCompare's worked example (updated 2 Nov 2026) puts a JVC 1-bed at AED 55,000 a year in rent against a mortgage of AED 3,333 a month — AED 39,996 a year — with a break-even of 3–6 years and about 28% of the price needed in cash upfront. Read that carefully: buying is cheaper per month in the example, but only wins if you stay past the break-even, because the upfront cash is real money out on day one. Run your own area through the calculator above with your real mortgage quote — do not copy JVC numbers onto a Marina or Downtown decision.</p>
+      <p class="src">Source: <a href="https://mortgagecompare.ae/knowledge-hub/rent-or-buy-dubai.html">MortgageCompare</a> (accessed 6 Nov 2026).</p>
+    </details>
+    <details>
+      <summary>What this site does not claim</summary>
+      <p>Three honest limits. <b>1)</b> No verified monthly search volume, keyword difficulty or CPC for any specific Dubai keyword was found on a free source in the underlying research — Ahrefs and Semrush are paywalled and Google Keyword Planner needs sign-in — so this site makes no traffic claims. <b>2)</b> Google Trends data for the UAE could not be retrieved in that research, so there are no trend scores here. <b>3)</b> Rent rules change: the DLD can update the Index method, so re-check the official calculator every renewal. General information only — not legal advice; for a live dispute, use the Dubai Rental Dispute Centre.</p>
+      <p class="src">From the audit's “Could not verify” section, 6 Nov 2026.</p>
+    </details>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2 style="font-size:22px;margin-bottom:8px">Sources</h2>
+      <ul style="margin:0;padding-left:18px">
+        <li><a href="https://mortgagecompare.ae/knowledge-hub/rent-or-buy-dubai.html">MortgageCompare — Rent or buy in Dubai</a> (updated 2 Nov 2026) — JVC rent/mortgage example, 3–6 year break-even, ~28% upfront.</li>
+        <li><a href="https://www.drivenproperties.com/blog/rera-rent-calculator-dubai">Driven Properties — RERA Rent Calculator Dubai 2026</a> — 0–20% bands, 90-day notice.</li>
+        <li><a href="https://www.propertystellar.com/blog/understanding-the-rera-rental-increase-calculator">PropertyStellar — RERA Rental Increase Calculator 2026</a> — bands; Smart Rental Index, Jan 2025.</li>
+        <li><a href="https://www.keysandnumbers.com/blog/rent-vs-buy-in-dubai-2026">KeysAndNumbers — Rent or Buy in Dubai 2026</a> — apartment gross yield 6.66%, Aug 2026.</li>
+      </ul>
+      <p class="small">All sources accessed 6 November 2026 for the Dubai Blog + SaaS Gap Audit. Figures are reproduced with the audit's caveats; where sources conflicted or a figure could not be verified, this page says so rather than picking a number.</p>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <p style="margin:0"><b>Dubai Rent Calculator</b> — RERA checker, rent-vs-buy maths and renewal letters for Dubai tenants.</p>
+  <p class="small">General information only, not legal or financial advice. Always confirm your permitted increase in the official Dubai Land Department Smart Rental Index calculator. Research snapshot: 6 November 2026.</p>
+</div></footer>
+
+<script>
+function fmt(n){ return 'AED ' + Math.round(n).toLocaleString('en-US'); }
+function showTab(which){
+  document.getElementById('panel-rera').hidden = which!=='rera';
+  document.getElementById('panel-rvb').hidden = which!=='rvb';
+  document.getElementById('tab-rera').setAttribute('aria-selected', which==='rera');
+  document.getElementById('tab-rvb').setAttribute('aria-selected', which==='rvb');
+}
+function calcRera(){
+  var cur=+document.getElementById('curRent').value||0;
+  var nw=+document.getElementById('newRent').value||0;
+  var days=+document.getElementById('noticeDays').value||0;
+  var el=document.getElementById('reraResult');
+  if(cur<=0){ el.innerHTML='<p>Enter your current rent to see the result.</p>'; return; }
+  var diff=nw-cur, pct=cur? (diff/cur*100):0;
+  var verdict, cls;
+  if(pct>20){ verdict='Above the 20% maximum — not permitted under the RERA bands, whatever your Index gap.'; cls='bad'; }
+  else if(pct<0){ verdict='That is a rent decrease — no band issue. Confirm the new figure in the renewed contract and Ejari.'; cls='ok'; }
+  else if(pct===0){ verdict='No increase — the 0% band outcome. Nothing to challenge on the amount.'; cls='ok'; }
+  else { verdict='Within the 0–20% band range — but that alone does not make it lawful. Your exact permitted band depends on your Smart Rental Index gap: if your permitted band is lower than '+pct.toFixed(1)+'%, the excess is challengeable. Check the official DLD figure before agreeing.'; cls='warn'; }
+  var notice = days>=90 ? '<span class="badge ok">Notice OK — '+days+' days meets the 90-day rule</span>' : '<span class="badge bad">Notice short — '+days+' days is under the required 90 days</span>';
+  el.innerHTML='<div class="small">Proposed increase</div><div class="big">'+fmt(diff)+' <span style="font-size:18px">('+pct.toFixed(1)+'%)</span></div>'
+    +'<p>'+notice+'</p><p><span class="badge '+cls+'">'+(cls==='bad'?'Needs action':cls==='ok'?'Looks fine':'Check your band')+'</span></p><p style="margin-bottom:0">'+verdict+'</p>'
+    +'<p class="small" style="margin-bottom:0">New monthly equivalent: '+fmt(nw/12)+' · Current monthly: '+fmt(cur/12)+'</p>';
+}
+function calcRvb(){
+  var rent=+document.getElementById('rvbRent').value||0;
+  var mort=+document.getElementById('rvbMort').value||0;
+  var price=+document.getElementById('rvbPrice').value||0;
+  var years=+document.getElementById('rvbYears').value||5;
+  document.getElementById('rvbYearsLabel').textContent = years + (years===1?' year':' years');
+  var upfront = price*0.28;
+  var rentTotal = rent*years;
+  var buyTotal = upfront + mort*12*years;
+  var diff = buyTotal - rentTotal;
+  var pct = rentTotal? Math.min(100, buyTotal/rentTotal*50):50;
+  var el=document.getElementById('rvbResult');
+  el.innerHTML='<div class="small">Over '+years+' years — cash paid out</div>'
+    +'<p style="margin:8px 0 2px"><b>Renting:</b> '+fmt(rentTotal)+'</p><div class="bar"><i style="width:'+(rentTotal>=buyTotal?100:pct)+'%"></i></div>'
+    +'<p style="margin:8px 0 2px"><b>Buying:</b> '+fmt(buyTotal)+' <span class="small">(upfront '+fmt(upfront)+' + mortgage '+fmt(mort*12*years)+')</span></p><div class="bar"><i style="width:'+(buyTotal>=rentTotal?100:(rentTotal?buyTotal/rentTotal*100:0))+'%"></i></div>'
+    +'<p style="margin-bottom:0">'+(diff>0
+      ? 'On cash outlay alone, renting costs <b>'+fmt(Math.abs(diff))+' less</b> over this stay — before counting that mortgage payments build ownership and rent builds none. The published JVC break-even is 3–6 years; short stays favour renting.'
+      : 'On cash outlay alone, buying costs <b>'+fmt(Math.abs(diff))+' less</b> over this stay, and mortgage payments build ownership on top. Check the stay length against the published 3–6 year JVC break-even.')+'</p>'
+    +'<p class="small" style="margin-bottom:0">Simplified comparison only: excludes maintenance, service charges, price movements and interest changes.</p>';
+}
+function resetJvc(){
+  document.getElementById('rvbRent').value=55000; document.getElementById('rvbMort').value=3333;
+  document.getElementById('rvbPrice').value=850000; document.getElementById('rvbYears').value=5; calcRvb();
+}
+function buildLetter(){
+  var name=document.getElementById('tName').value||'Your Name';
+  var unit=document.getElementById('tUnit').value||'your unit';
+  var ll=document.getElementById('tLandlord').value||'Landlord / Agency';
+  var type=document.getElementById('tType').value;
+  var cur=document.getElementById('curRent').value, nw=document.getElementById('newRent').value;
+  var body='';
+  if(type==='challenge'){
+    body='I am writing about the proposed rent increase for '+unit+', from AED '+Number(cur||0).toLocaleString('en-US')+' to AED '+Number(nw||0).toLocaleString('en-US')+' per year.\n\nUnder Decree 43/2013, rent increases in Dubai are capped by the RERA bands of 0%, 5%, 10%, 15% or 20%, set by the Smart Rental Index for similar property. The proposed increase appears to exceed the band that applies to this unit.\n\nPlease confirm the Smart Rental Index figure relied on and revise the proposed rent to the permitted amount. I am happy to renew on that basis and complete the Ejari renewal promptly.\n\nThank you for your understanding.';
+  } else if(type==='shortnotice'){
+    body='I am writing about the proposed rent increase for '+unit+'.\n\nRent increases at renewal require 90 days\' notice. The notice I received gives less than 90 days, so the increase cannot apply to this renewal on the proposed date.\n\nPlease either apply the increase from the next renewal with proper notice, or renew at the current rent for this term. I am happy to complete the Ejari renewal on that basis.\n\nThank you for your understanding.';
+  } else {
+    body='Thank you for the renewal terms for '+unit+'. I accept the renewed rent as agreed and confirm I am ready to proceed.\n\nPlease send the renewed tenancy contract for signature so we can complete the Ejari renewal for the new term. I will arrange the cheques as set out in the contract.\n\nThank you.';
+  }
+  document.getElementById('letterOut').value='Dear '+ll+',\n\n'+body+'\n\nKind regards,\n'+name+'\nTenant — '+unit;
+}
+function copyLetter(){
+  var t=document.getElementById('letterOut'); t.select();
+  if(navigator.clipboard){ navigator.clipboard.writeText(t.value).then(function(){ document.getElementById('copyMsg').textContent='Copied.'; }); }
+  else { document.execCommand('copy'); document.getElementById('copyMsg').textContent='Copied.'; }
+}
+function downloadLetter(){
+  var blob=new Blob([document.getElementById('letterOut').value],{type:'text/plain'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dubai-rent-renewal-letter.txt'; a.click(); URL.revokeObjectURL(a.href);
+}
+calcRera(); calcRvb(); buildLetter();
+</script>
+</body>
+</html>
